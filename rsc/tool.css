@@ -1,0 +1,8 @@
+.main{margin:30px;}
+.param div{padding:0;}
+.am-form-field{margin-bottom:20px;}
+.param input[name=key]{border-right:none;}
+button{margin-left:30px;}
+button >a,button>a:hover{color:#444;}
+#list-content p{cursor:pointer;line-height:10px;}
+.am-panel-title{font-weight:normal;}
