@@ -7,6 +7,55 @@ $('#add').click(function () {
     return copy;
 });
 
+
+// 添加参数
+$('#add_request').click(function () {
+    addRequestRow();
+});
+//添加请求参数
+function addRequestRow(request) {
+    var obj = typeof (request) == 'object' ? request : [{name: '', required: 1, type: 'string', desc: ''}];
+    var strHtml = '';
+    for (var item = 0; item < obj.length; item++) {
+        strHtml += '<div class="fields">' +
+            '<div class="inline field" data-tooltip="删除">' +
+            '<i class="circular icon link remove red" onclick="removeOneRow(this)"></i>' +
+            '</div>' +
+            '<div class="four wide field">' +
+            '<input type="text" placeholder="参数名" value="' +
+            obj[item]['name'] +
+            '">' +
+            '</div>' +
+            '<div class="three wide field">' +
+            '<select class="ui fluid dropdown">';
+        strHtml += '<option value="0" ' + (obj[item]['required'] == 0 ? ' selected' :'') +'>否</option>'
+            + '<option value="1" ' + (obj[item]['required'] == 1 ? ' selected' :'') +'>是</option>';
+        strHtml += '</select>' +
+            '</div>' +
+            '<div class="three wide field">' +
+            '<select class="ui fluid dropdown"> ';
+        strHtml +=
+            '<option value="string"' + (obj[item]['type'] == 'string' ? ' selected' :'') +  '>string</option>'
+            + '<option value="integer"' + (obj[item]['type'] == 'integer' ? ' selected' :'') + '>integer</option>'
+            + '<option value="json"' + (obj[item]['type'] == 'json' ? ' selected' :'') + '>json</option>'
+            + '<option value="array"' + (obj[item]['type'] == 'array' ? ' selected' :'') + '>array</option>';
+        strHtml += '</select>' +
+            '</div>' +
+            '<div class="six wide field">' +
+            '<input type="text" placeholder="描述" value="' +
+            obj[item]['desc'] +
+            '">' +
+            '</div>' +
+            '</div>';
+    }
+    $('#request_arr').append(strHtml);
+    $('.ui.dropdown').dropdown();
+}
+
+
+
+
+
 //发送请求
 $('#send').click(function () {
     $('.response').html('');
@@ -75,9 +124,9 @@ $('#sidebar').on('click', '.read', function () {
 $('#sign').change(function(){
 	var issign = $('#sign').val();
 	if(issign == 'yes'){
-		$('#sign_param').show();
+		$('.sign_param').show();
 	}else if(issign == 'no'){
-		$('#sign_param').hide();
+		$('.sign_param').hide();
 	}
 });
 
