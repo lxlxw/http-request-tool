@@ -6,7 +6,7 @@ The tool sends forth Http request,processes the commands,and the response return
 
 The Http request requires an API key  you need in advance.
 
-[![Build Status](https://lxlxw.github.io/http-request-tool/)](https://lxlxw.github.io/http-request-tool/)
+[![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://lxlxw.github.io/http-request-tool/)
 
 ### Requirements
 
