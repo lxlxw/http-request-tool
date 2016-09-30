@@ -4,7 +4,6 @@
     <title>API接口测试工具</title>
     <meta charset="UTF-8"/>
     <link href="rsc/semantic/semantic.min.css" rel="stylesheet" type="text/css">
-    <!--  link href="rsc/amazeui.min.css" rel="stylesheet" type="text/css"/>-->
     <link href="rsc/tool.css" rel="stylesheet" type="text/css"/>
 </head>
 <body class="pushable">
@@ -12,12 +11,10 @@
     <div class="main ui container">
     	<div class="ui hidden divider"></div>
     	<div class="ui piled blue segment">
-        <!--  div class="ui dividing header">请求配置</div>-->
         <h3 class="ui dividing header">请求配置</h3>
-        <div class="am-panel-bd ui form">
+        <div class="ui form" id="param_form">
             <!--参数配置开始-->
-            <form id="form">
-                <div class="ui segment" id="request_arr">
+                <div class="ui segment" >
                     <div class="inline fields">
                         <div class="two wide field">
                             <label class="ui header">接口地址</label>
@@ -30,24 +27,23 @@
                      				<option value="post">POST</option>
                      			</select>
                         </div>
-                       
                         <div class="eleven wide field ui labeled input">
 						  <div class="ui label">http:// </div>
 						  <input name="url" id="url" type="text" class="text" placeholder="site.com"/>
-						  <button class="ui teal right labeled icon button"><i class="copy icon"></i> Copy </button>
+						  <button class="ui teal right labeled icon button copy_button" data-tooltip="复制到剪贴板"><i class="copy icon"></i> Copy </button>
 						</div>
                     </div>
                 </div>
-                <div class="ui segment" id="request_arr">
+                <div class="ui segment" >
                     <div class="inline fields">
                         <div class="two wide field">
                             <label class="ui header" data-tooltip="一套类似淘宝开放API的签名规则">&nbsp;是否签名</label>
                         </div>
                         <div style="display:none" class="four wide field sign_param">
-                            <label class="ui header">&nbsp;AppID</label>
+                            <label class="ui header">&nbsp;<i class="user icon"></i></label>
                         </div>
                         <div style="display:none" class="nine wide field sign_param">
-                            <label class="ui header">&nbsp;&nbsp;<i class="privacy icon"></i>私钥</label>
+                            <label class="ui header">&nbsp;&nbsp;<i class="privacy icon"></i></label>
                         </div>
                     </div>
                     <div class="fields">
@@ -65,34 +61,6 @@
                         </div>
                     </div>
                 </div>
-                
-                
-                
-                <div class="field">
-                    <div class="ui toggle checkbox" data-tooltip="xxxx" id="isjson">
-                        <input type="checkbox" name="vehicle" value="yes" checked="checked" />
-                        
-                        <label>JSON字符串（推荐）</label>
-                    </div>
-                </div>
-
-
-
-               <div class="ui toggle checkbox" data-tooltip="一套类似百度api的签名规则" id="xxxx">
-               <label >是否签名</label>
-                     <input type="checkbox" tabindex="0" class="hidden" value="1" checked>
-               </div>
-               <div class="ui toggle checkbox" data-tooltip="将返回php注释" id="isdoc">
-                        <input type="checkbox" tabindex="0" class="hidden" value="1">
-                        <label>PHP注释</label>
-               </div>
-                <!--  div>
-                    是否签名：
-                    <select name="sign" id="sign" class="am-form-field field">
-                        <option value="no">否</option>
-                        <option value="yes">是</option>
-                    </select> 
-                </div>--> 
                 <div class="ui divider"></div>
                 <div id="sign_param" style="display:none">
                     <label class="ui header">签名参数：</label>
@@ -126,63 +94,49 @@
                         <div class="inline field" data-tooltip="删除">
                             <i class="circular icon link remove red" onclick="removeOneRow(this)"></i>
                         </div>
-                        <div class="six wide field">
-                            <input name="key" type="text" placeholder="KEY" value="">
+                        <div class="param six wide field">
+                            <input type="text" placeholder="KEY" value="">
                         </div>
-                        <div class="nine wide field">
-                            <input name="val" type="text" placeholder="VAL" value="">
+                        <div class="param nine wide field">
+                            <input type="text" placeholder="VAL" value="">
                         </div>
                     </div>
+
                 </div>
                 <div class="ui divider"></div>
-                <!-- div>
-                    请求参数：
-                    <div class="param am-g">
-                        <div class="am-u-sm-3">
-                            <input name="key" type="text" placeholder="KEY" class="am-form-field">
-                        </div>
-                        <div class="am-u-sm-9">
-                            <input name="val" type="text" placeholder="VAL" class="am-form-field"/>
-                        </div>
-                    </div>
-                </div> -->
-            </form>
             <!--参数配置结束-->
 
             <!--工具按钮开始-->
             <div class="am-pagination-right">
                 <button type="button" class="ui basic button"><a href="multi.html" target="_blank">批 量 测 试</a></button>
                 <button id="save" type="button" class="ui basic button">保 存 配 置</button>
-                <button id="lists" type="button" class="ui basic button blue" data-am-offcanvas="{target:'#sidebar'}">显 示 列 表</button>      
-                <button id="add" type="button" class="ui basic button">添 加 参 数</button>
+                <button id="showopt"  class="ui basic button blue" ">显 示 列 表</button>      
+                <!--button id="add" type="button" class="ui basic button">添 加 参 数</button-->
                 <button class="right floated ui basic button green" id="send"><i class="icon send"></i>发 送 请 求</button>
             </div>
             <!--工具按钮结束-->
 
             <!--侧边菜单开始-->
-            <div id="sidebar" class="am-offcanvas">
-                <div class="am-offcanvas-bar am-offcanvas-bar-flip">
-                    <div id="list-content" class="am-offcanvas-content"></div>
-                </div>
-            </div>
+            <div class="ui sidebar right inverted vertical menu" id="optlist">
+    			<div class="item" id="list-content">
+        			<a><i class="icon list layout"></i>配置列表</a>
+    			</div>
+			</div>
             <!--侧边菜单结束-->
         </div>
             <div class="ui divider"></div>
-            <h5 class="ui header">返回结果</h5>
+            <h5 class="ui horizontal divider header"><i class="bar chart icon"></i> 返回结果 </h5>
             <div class="ui tall stacked segment form">
                 <!-- textarea id="result" name="result" class="text" rows="2" style="resize: none" readonly>NULL</textarea> -->
-                <div class="am-panel-bd response">NULL</div>
+                <div id="result"   class="am-panel-bd response">NULL</div>
             </div>
-    </div>
-    <div class="am-panel am-panel-default">
-        <div class="am-panel-hd">返回结果</div>
-        <div class="am-panel-bd response">NULL</div>
     </div>
 </div>
 </div>
 <!--加载JS开始-->
 <script src="rsc/jquery-2.2.4.min.js" type="text/javascript"></script>
-<script src="rsc/amazeui.min.js" type="text/javascript"></script>
+<script src="rsc/jquery.zclip.min.js" type="text/javascript"></script>
+<script src="rsc/jquery.zclip.js" type="text/javascript"></script>
 <script src="rsc/semantic/semantic.min.js" type="text/javascript"></script>
 <script src="rsc/tool.js" type="text/javascript"></script>
 <!--加载JS结束-->

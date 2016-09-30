@@ -1,12 +1,8 @@
-//添加参数
-$('#add').click(function () {
-    var div = $('.param:first');
-    var copy = div.clone();
-    copy.find(':text').val('');
-    copy.insertBefore(div);
-    return copy;
+// semantic初始化
+$('#showopt').click(function(){
+    getOptList();
+    $('#optlist').sidebar('toggle');
 });
-
 
 // 添加参数
 $('#add_request').click(function () {
@@ -14,51 +10,44 @@ $('#add_request').click(function () {
 });
 //添加请求参数
 function addRequestRow(request) {
-    var obj = typeof (request) == 'object' ? request : [{name: '', required: 1, type: 'string', desc: ''}];
+    var obj = typeof (request) == 'object' ? request : [{key: '', val: ''}];
     var strHtml = '';
     for (var item = 0; item < obj.length; item++) {
         strHtml += '<div class="fields">' +
             '<div class="inline field" data-tooltip="删除">' +
             '<i class="circular icon link remove red" onclick="removeOneRow(this)"></i>' +
             '</div>' +
-            '<div class="four wide field">' +
-            '<input type="text" placeholder="参数名" value="' +
-            obj[item]['name'] +
+            '<div class="param six wide field">' +
+            '<input type="text" placeholder="KEY" value="' +
+            obj[item]['key'] +
             '">' +
             '</div>' +
-            '<div class="three wide field">' +
-            '<select class="ui fluid dropdown">';
-        strHtml += '<option value="0" ' + (obj[item]['required'] == 0 ? ' selected' :'') +'>否</option>'
-            + '<option value="1" ' + (obj[item]['required'] == 1 ? ' selected' :'') +'>是</option>';
-        strHtml += '</select>' +
-            '</div>' +
-            '<div class="three wide field">' +
-            '<select class="ui fluid dropdown"> ';
-        strHtml +=
-            '<option value="string"' + (obj[item]['type'] == 'string' ? ' selected' :'') +  '>string</option>'
-            + '<option value="integer"' + (obj[item]['type'] == 'integer' ? ' selected' :'') + '>integer</option>'
-            + '<option value="json"' + (obj[item]['type'] == 'json' ? ' selected' :'') + '>json</option>'
-            + '<option value="array"' + (obj[item]['type'] == 'array' ? ' selected' :'') + '>array</option>';
-        strHtml += '</select>' +
-            '</div>' +
-            '<div class="six wide field">' +
-            '<input type="text" placeholder="描述" value="' +
-            obj[item]['desc'] +
+            '<div class="param nine wide field">' +
+            '<input type="text" placeholder="VAL" value="' +
+            obj[item]['val'] +
             '">' +
             '</div>' +
             '</div>';
     }
     $('#request_arr').append(strHtml);
-    $('.ui.dropdown').dropdown();
 }
 
-
-
-
+//删除参数行
+function removeOneRow(e) {
+    e.closest('.fields').remove();
+}
+// 移除全部
+$('#removeall_request').click(function () {
+    $('#request_arr').children(".fields:eq(0)").siblings().remove();
+    //addRequestRow();
+});
 
 //发送请求
 $('#send').click(function () {
     $('.response').html('');
+    
+    
+    
     var params = {url: $('#url').val()};
     var sign = $('#sign').val();
     if(sign == 'yes'){
@@ -70,56 +59,90 @@ $('#send').click(function () {
             params[key] = $(this).find('input[name=val]').val();
         }
     });
-    $.post('action.php?func=' + $('#type').val(), params, function (data) {
+    $.post('action.php?func=' + $('#type').val(), getAllInfo(), function (data) {
         $('.response').html(data);
     });
 });
 
 //保存配置
 $('#save').click(function () {
+	var info = getAllInfo();
     var name = prompt('请输入配置名称（不允许包含特殊字符）');
     if (name) {
-        var params = {'name': name, 'data': $('#form').serialize()};
+        var params = {'name': name, 'data': info};
         $.post('action.php?func=save', params, function (data) {
             data == 'ok' && alert('保存成功!');
         });
     }
 });
+//获取所有信息
+function getAllInfo() {
+    var info = {};
+    info.url = $('#url').val();
+    info.type = $('#type').val();
+    info.sign = $('#sign').val();
+    info.appid = $('#appid').val();
+    info.appkey = $('#appkey').val();
+    info.request = getRequestInfo();
+    return info;
+}
 
-//显示列表
-$('#lists').click(function () {
-    $.post('action.php?func=lists', {}, function (data) {
-        var content = '';
-        $.each(data, function (index, name) {
-            content += '<p class="read">' + name + '</p>';
-        });
-        $('#list-content').html(content);
-    }, 'json');
-});
-
-//读取配置
-$('#sidebar').on('click', '.read', function () {
-    $('.param').each(function (index, param) {
-        index && param.remove(); //清空参数
-    });
-    $.post('action.php?func=read', {'name': $(this).text()}, function (data) {
-        $('#url').val(data.url);
-        $("#type").val(data.type);
-        $("#sign").val(data.sign);
-        $("#appid").val(data.appid);
-        $("#appkey").val(data.appkey);
-        var sign = $("#sign").val();
-        if(sign == 'yes'){
-        	$('#sign_param').show();
+// 获取请求参数
+function getRequestInfo() {
+    var request = [];
+    var requestEle = $('#request_arr').find('.fields');
+    for (var i = 0; i < requestEle.length; i++) {
+        if (i > 0) {
+            var temp = {};
+            var inputEle = $(requestEle[i]).find('input');
+            if ('' !== inputEle[0].value) {
+                temp.key = inputEle[0].value;
+                temp.val = inputEle[1].value;
+                request.push(temp);
+            }
         }
-        $(data.param).each(function (index, param) {
-            index && $('#add').click();
-            var div = $('.param:first');
-            div.find('input[name=key]').val(param.key);
-            div.find('input[name=val]').val(param.val);
-        });
+    }
+    return request;
+}
+
+//获取配置列表
+function getOptList() {
+    $.ajax({
+        url: './action.php?func=lists',
+        dataType: 'json',
+        type: 'get',
+        data:{},
+        success: function(resopnse) {
+            var html = '<div class="item"><a><i class="icon list layout"></i>配置列表</a></div>';
+            for (var i = 0; i < resopnse.length; i++) {
+                html += '<a class="item" data-content="' + resopnse[i] + '" onclick="loadAllInfo(this)">' + resopnse[i] + '</a>';
+            }
+            $('#optlist').html(html);
+        }
+    });
+}
+
+//加载配置
+function loadAllInfo(e) {
+    var filename = e.getAttribute('data-content');
+    $('#param_form').addClass('loading');
+    $('#result').empty().html('NULL').attr('rows', 2);
+    $.post('action.php?func=read', {'name': filename}, function (data) {
+    	$('#removeall_request').trigger('click');
+    	addRequestRow(data.request);
+    	$('#url').val(data.url);
+    	$("#type").val(data.type);
+    	$("#sign").val(data.sign);
+    	$("#appid").val(data.appid);
+    	$("#appkey").val(data.appkey);
+    	var sign = $("#sign").val();
+    	if(sign == 'yes'){
+    		$('.sign_param').show();
+    	}
+    	$('#param_form').removeClass('loading');
     }, 'json');
-});
+}
+
 //签名显示
 $('#sign').change(function(){
 	var issign = $('#sign').val();
@@ -147,3 +170,12 @@ function multi() {
         });
     }, 'json');
 }
+//点击文本框复制其内容到剪贴板上
+$(".copy_button").zclip({
+	//alert(1);
+    path: "rsc/ZeroClipboard.swf",
+    copy: function(){
+    return $(this).parent().find("#url").val();
+    },
+    afterCopy : function() {alert("success");/*复制成功*/}
+});

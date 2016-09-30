@@ -23,7 +23,6 @@ function post()
 {
     $url = url();
     $arrHeader = [];
-    
     $sendParam = checkParam($_POST, $arrHeader);
     $data = http($url, 'POST', $sendParam, [], $arrHeader);
     $data = isJson($data) ? json_decode($data, TRUE) : $data;
@@ -35,24 +34,19 @@ function post()
  */
 function save()
 {
-    $params = explode('&', $_POST['data']);
-    
-    $data = $item = [];
-    foreach ($params as $param) {
-        $param = urldecode($param);
-        list($key, $val) = explode('=', $param);
-        $item[$key][] = $val;
+    $params = $_POST['data'];
+    $data = [];
+    foreach ($params as $k => $param){
+        if(is_array($param)){
+            foreach ($param as $key => $val){
+                $param[$key]['key'] = htmlspecialchars($val['key']);
+                $param[$key]['val'] = htmlspecialchars($val['val']);
+            }
+        }
+        $data[$k] = $param;
     }
-    list($data['type'], $data['url']) = [$item['type'][0], $item['url'][0]];
-    list($data['sign'], $data['appid'], $data['appkey']) = [$item['sign'][0],$item['appid'][0], $item['appkey'][0]];
-    
-    foreach ($item['key'] as $index => $key) {
-        $data['param'][] = ['key' => $key, 'val' => $item['val'][$index]];
-    }
-    $data['param'] = array_reverse($data['param']);
-    $data = json_encode($data);
-    $file = "data/{$_POST['name']}.txt";
-    echo file_put_contents($file, $data) ? 'ok' : '';
+    unset($params);
+    echo file_put_contents("data/" . urlencode($_POST['name']) . '.txt', json_encode($data)) ? 'ok' : '';
 }
 
 /**

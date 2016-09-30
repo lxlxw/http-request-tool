@@ -21,18 +21,25 @@ function isJson($str)
 
 function checkParam($param,& $p_arrHeader)
 {
+    $data = [];
+    if(!empty($param['request'] && is_array($param['request']))){
+        foreach ($param['request'] as $val){
+            foreach ($val as $k => $v){
+                $data[$val['key']] = $val['val'];
+            }
+        }
+    }
     if(!empty($param['appid']) && !empty($param['appkey'])){
         $appkey = $param['appkey'];
+        $data['appid'] = $param['appid'];
         unset($param['appkey']);
-        $sign = getAuthSignStr($param,$appkey);
-        
+        $sign = getAuthSignStr($data,$appkey);
         $p_arrHeader = [
             'appid' => $param['appid'],
             'sign'  => $sign,
         ];
-        //unset($param['appid']);
     }
-    return $param;
+    return $data;
 }
 
 function getAuthSignStr($arrInput,$appkey) {

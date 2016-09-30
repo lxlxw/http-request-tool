@@ -1,1 +1,1 @@
-{"url":"http:\/\/192.168.33.10:2202\/Party\/PartyTalent\/applyTalent","type":"post","appkey":"bb1eb6fbe22719276129273c7e1487d8","appid":"102","sign":"yes","param":[{"key":"tags","val":"1,2,3"},{"key":"uid","val":"1044"},{"key":"id","val":"{\"type\":\"2\",\"number\":\"2333\",\"front\":\"3\"}"}]}
+{"url":"http:\/\/192.168.0.1:80\/test\/test","type":"get","sign":"yes","appid":"1","appkey":"test","request":[{"key":"id","val":"1"},{"key":"uesr","val":"2"}]}
