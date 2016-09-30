@@ -45,20 +45,6 @@ $('#removeall_request').click(function () {
 //发送请求
 $('#send').click(function () {
     $('.response').html('');
-    
-    
-    
-    var params = {url: $('#url').val()};
-    var sign = $('#sign').val();
-    if(sign == 'yes'){
-    	params['appid']  = $('#appid').val();
-    	params['appkey'] = $('#appkey').val();
-    }
-    $('.param').map(function () {
-        if (key = $(this).find('input[name=key]').val()) {
-            params[key] = $(this).find('input[name=val]').val();
-        }
-    });
     $.post('action.php?func=' + $('#type').val(), getAllInfo(), function (data) {
         $('.response').html(data);
     });
