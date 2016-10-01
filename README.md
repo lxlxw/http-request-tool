@@ -4,11 +4,13 @@
 
 The tool sends forth Http request,processes the commands,and the response returned from the web service. 
 
-The Http request requires an API key  you need in advance.
+The http request requires an API key  you need in advance.
 
 [![Build Status](https://img.shields.io/travis/erusev/parsedown/master.svg?style=flat-square)](https://lxlxw.github.io/http-request-tool/)
 
 ### Requirements
 
 * PHP 5.4 or newer
+
+### Exhibition
 
